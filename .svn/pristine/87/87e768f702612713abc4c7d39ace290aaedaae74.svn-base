@@ -1,0 +1,8 @@
+package br.edu.ifce.mflj.jogo;
+
+import br.edu.ifce.mflj.dados.Casa;
+import br.edu.ifce.mflj.dados.Peca;
+
+public interface Regulamento {
+	Boolean movimentoPermitido( Casa[][] tabuleiro, Casa casaDestino, Peca peca );
+}

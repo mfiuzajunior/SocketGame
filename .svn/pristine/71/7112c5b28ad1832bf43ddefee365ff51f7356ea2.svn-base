@@ -1,0 +1,132 @@
+package br.edu.ifce.mflj.dados;
+
+import java.awt.Image;
+
+import javax.swing.ImageIcon;
+
+public class Peca {
+
+	public static final int		BANDEIRA		= 0,
+								ESPIAO			= 1,
+								SOLDADO			= 2,
+								CABO_ARMEIRO	= 3,
+								SARGENTO		= 4,
+								TENENTE			= 5,
+								CAPITAO			= 6,
+								MAJOR			= 7,
+								CORONEL			= 8,
+								GENERAL			= 9,
+								MARECHAL		= 10,
+								BOMBA			= 11;
+
+	private Image	imagem;
+
+	private Integer	tipoPeca,
+					coordenadaX,
+					coordenadaY,
+					coluna,
+					linha;
+
+	/**
+	 * @param coordenadaX Determina a posição X da imagem da peça em relação ao JPanel. O campo casaX da classe determina a posição X na matrix do tabuleiro
+	 * @param coordenadaY Determina a posição Y da imagem da peça em relação ao JPanel. O campo casaY da classe determina a posição Y na matrix do tabuleiro.
+	 */
+	public Peca( Integer linha, Integer coluna, Integer tipoPeca ){
+		String nomeImagem	= "";
+
+		this.tipoPeca		= tipoPeca;
+		this.coordenadaX	= DimensoesTabuleiro.LIMITE_INICIAL_X + ( coluna * DimensoesTabuleiro.LADO_CASA );
+		this.coordenadaY	= DimensoesTabuleiro.LIMITE_INICIAL_Y + ( linha * DimensoesTabuleiro.LADO_CASA );
+
+		switch ( this.tipoPeca ) {
+			case Peca.SOLDADO:
+				nomeImagem = "imagens/soldado.png";
+				break;
+
+			case Peca.CABO_ARMEIRO:
+				nomeImagem = "imagens/cabo.png";
+				break;
+
+			case Peca.CAPITAO:
+				nomeImagem = "imagens/capitao.png";
+				break;
+
+			case Peca.ESPIAO:
+				nomeImagem = "imagens/espiao.png";
+				break;
+
+			case Peca.GENERAL:
+				nomeImagem = "imagens/general.png";
+				break;
+
+			case Peca.SARGENTO:
+				nomeImagem = "imagens/sargento.png";
+				break;
+
+			case Peca.TENENTE:
+				nomeImagem = "imagens/tenente.png";
+				break;
+
+			default:
+				break;
+		}
+
+		imagem = new ImageIcon( nomeImagem ).getImage();
+
+		this.setLinha( linha );
+		this.setColuna( coluna );
+	}
+
+	public Image getImagem() {
+		return imagem;
+	}
+
+	public void setImagem(Image imagem) {
+		this.imagem = imagem;
+	}
+
+	public Integer getTipoPeca() {
+		return tipoPeca;
+	}
+
+	public void setTipoPeca(Integer tipoPeca) {
+		this.tipoPeca = tipoPeca;
+	}
+
+	public Integer getCoordenadaX() {
+		return coordenadaX;
+	}
+
+	public void setCoordenadaX(Integer coordenadaX) {
+		this.coordenadaX = coordenadaX;
+	}
+
+	public Integer getCoordenadaY() {
+		return coordenadaY;
+	}
+
+	public void setCoordenadaY(Integer coordenadaY) {
+		this.coordenadaY = coordenadaY;
+	}
+
+	public Integer getColuna() {
+		return coluna;
+	}
+
+	public void setColuna(Integer coluna) {
+		this.coluna = coluna;
+	}
+
+	public Integer getLinha() {
+		return linha;
+	}
+
+	public void setLinha(Integer linha) {
+		this.linha = linha;
+	}
+
+	public void resetarPosicaoInicial(){
+		this.coordenadaX = DimensoesTabuleiro.LIMITE_INICIAL_X + ( this.getColuna() * DimensoesTabuleiro.LADO_CASA );
+		this.coordenadaY = DimensoesTabuleiro.LIMITE_INICIAL_Y + ( this.getLinha() * DimensoesTabuleiro.LADO_CASA );
+	}
+}

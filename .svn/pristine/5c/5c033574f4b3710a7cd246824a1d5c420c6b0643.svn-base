@@ -1,0 +1,54 @@
+package br.edu.ifce.mflj.dados;
+
+public class Casa {
+
+	private Boolean	ocupada;
+	private Integer	coluna,
+					linha;
+	private Peca	peca;
+
+	public Casa( Integer linha, Integer coluna, Integer tipoPeca ){
+		this.linha	= linha;
+		this.coluna	= coluna;
+
+		if( tipoPeca != null ){
+			this.ocupada	= true;
+			this.peca		= new Peca(	linha, coluna, tipoPeca );
+
+		} else {
+			this.ocupada = false;
+		}
+	}
+
+	public Boolean isOcupada() {
+		return ocupada;
+	}
+
+	public void setOcupada(Boolean ocupada) {
+		this.ocupada = ocupada;
+	}
+
+	public Integer getColuna() {
+		return coluna;
+	}
+
+	public void setColuna(Integer coluna) {
+		this.coluna = coluna;
+	}
+
+	public Integer getLinha() {
+		return linha;
+	}
+
+	public void setLinha(Integer linha) {
+		this.linha = linha;
+	}
+
+	public Peca getPeca() {
+		return peca;
+	}
+
+	public void setPeca(Peca peca) {
+		this.peca = peca;
+	}
+}

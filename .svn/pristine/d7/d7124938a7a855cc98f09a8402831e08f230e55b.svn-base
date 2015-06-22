@@ -1,0 +1,244 @@
+package br.edu.ifce.mflj.gui;
+
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+
+import javax.swing.JPanel;
+
+import br.edu.ifce.mflj.comunicacao.Pacote;
+import br.edu.ifce.mflj.dados.Casa;
+import br.edu.ifce.mflj.dados.DimensoesTabuleiro;
+import br.edu.ifce.mflj.dados.Peca;
+import br.edu.ifce.mflj.jogo.Regulamento;
+import br.edu.ifce.mflj.observer.CanalListener;
+
+public class TabuleiroPanel extends JPanel implements MouseMotionListener, MouseListener, CanalListener {
+
+	private static final long serialVersionUID = -8383511424909321696L;
+
+	private	Casa[][]			tabuleiro;
+	private Graphics2D			graphic;
+	private Integer				ultimoXMouse,
+								ultimoYMouse;
+	private Peca				pecaSelecionada;
+	private Regulamento			regras;
+
+	public TabuleiroPanel(){
+		tabuleiro = new Casa[ DimensoesTabuleiro.LINHAS ][ DimensoesTabuleiro.COLUNAS ];
+
+		for( int linhaAtual = 0; linhaAtual < DimensoesTabuleiro.LINHAS; linhaAtual++ ){
+			for( int colunaAtual = 0; colunaAtual < tabuleiro[ linhaAtual ].length; colunaAtual++ ){
+				tabuleiro[ linhaAtual ][ colunaAtual ] = new Casa( linhaAtual, colunaAtual,  null );
+			}
+		}
+
+		tabuleiro[ 0 ][ 10 ] = new Casa( 0, 10, Peca.SOLDADO );
+		tabuleiro[ 0 ][ 11 ] = new Casa( 0, 11, Peca.SOLDADO );
+		tabuleiro[ 0 ][ 12 ] = new Casa( 0, 12, Peca.SOLDADO );
+		tabuleiro[ 0 ][ 13 ] = new Casa( 0, 13, Peca.SOLDADO );
+		tabuleiro[ 0 ][ 14 ] = new Casa( 0, 14, Peca.SOLDADO );
+		tabuleiro[ 0 ][ 15 ] = new Casa( 0, 15, Peca.SOLDADO );
+		tabuleiro[ 0 ][ 16 ] = new Casa( 0, 16, Peca.SOLDADO );
+		tabuleiro[ 0 ][ 17 ] = new Casa( 0, 17, Peca.SOLDADO );
+
+		tabuleiro[ 1 ][ 10 ] = new Casa( 1, 10, Peca.CABO_ARMEIRO );
+		tabuleiro[ 1 ][ 11 ] = new Casa( 1, 11, Peca.CABO_ARMEIRO );
+		tabuleiro[ 1 ][ 12 ] = new Casa( 1, 12, Peca.CABO_ARMEIRO );
+		tabuleiro[ 1 ][ 13 ] = new Casa( 1, 13, Peca.CABO_ARMEIRO );
+		tabuleiro[ 1 ][ 14 ] = new Casa( 1, 14, Peca.CABO_ARMEIRO );
+
+		tabuleiro[ 2 ][ 10 ] = new Casa( 2, 10, Peca.SARGENTO );
+		tabuleiro[ 2 ][ 11 ] = new Casa( 2, 11, Peca.SARGENTO );
+		tabuleiro[ 2 ][ 12 ] = new Casa( 2, 12, Peca.SARGENTO );
+		tabuleiro[ 2 ][ 13 ] = new Casa( 2, 13, Peca.SARGENTO );
+
+		tabuleiro[ 3 ][ 10 ] = new Casa( 3, 10, Peca.TENENTE );
+		tabuleiro[ 3 ][ 11 ] = new Casa( 3, 11, Peca.TENENTE );
+		tabuleiro[ 3 ][ 12 ] = new Casa( 3, 12, Peca.TENENTE );
+		tabuleiro[ 3 ][ 13 ] = new Casa( 3, 13, Peca.TENENTE );
+
+		tabuleiro[ 4 ][ 10 ] = new Casa( 4, 10, Peca.CAPITAO );
+		tabuleiro[ 4 ][ 11 ] = new Casa( 4, 11, Peca.CAPITAO );
+		tabuleiro[ 4 ][ 12 ] = new Casa( 4, 12, Peca.CAPITAO );
+		tabuleiro[ 4 ][ 13 ] = new Casa( 4, 13, Peca.CAPITAO );
+
+		tabuleiro[ 5 ][ 10 ] = new Casa( 5, 10, Peca.MAJOR );
+		tabuleiro[ 5 ][ 11 ] = new Casa( 5, 11, Peca.MAJOR );
+		tabuleiro[ 5 ][ 12 ] = new Casa( 5, 12, Peca.MAJOR );
+
+		tabuleiro[ 6 ][ 10 ] = new Casa( 6, 10, Peca.CORONEL );
+		tabuleiro[ 6 ][ 11 ] = new Casa( 6, 11, Peca.CORONEL );
+
+		tabuleiro[ 7 ][ 11 ] = new Casa( 7, 11, Peca.GENERAL );
+
+		tabuleiro[ 7][ 11 ] = new Casa( 7, 11, Peca.MARECHAL );
+
+		addMouseMotionListener( this );
+		addMouseListener( this );
+	}
+
+	public Regulamento getRegras() {
+		return regras;
+	}
+
+	public void setRegras(Regulamento regras) {
+		this.regras = regras;
+	}
+
+	@Override
+	public void paintComponent( Graphics graphics ){
+		super.paintComponent( graphics );
+		this.graphic = ( Graphics2D )graphics.create();
+
+		redesenharTabuleiro();
+		desenharPecas();
+
+		this.graphic.dispose();
+	}
+
+	private void redesenharTabuleiro() {
+		// Linhas do eixo Y
+		for( int linhaVertical = DimensoesTabuleiro.LIMITE_INICIAL_X; linhaVertical <= DimensoesTabuleiro.LIMITE_FINAL_X; linhaVertical += DimensoesTabuleiro.LADO_CASA ){
+			graphic.drawLine( linhaVertical, DimensoesTabuleiro.LIMITE_INICIAL_Y, linhaVertical, DimensoesTabuleiro.LIMITE_FINAL_Y );
+		}
+
+		// Linhas do eixo X
+		for( int linhaHorizontal = DimensoesTabuleiro.LIMITE_INICIAL_Y; linhaHorizontal <= DimensoesTabuleiro.LIMITE_FINAL_Y; linhaHorizontal += DimensoesTabuleiro.LADO_CASA ){
+			graphic.drawLine( DimensoesTabuleiro.LIMITE_INICIAL_X, linhaHorizontal, DimensoesTabuleiro.LIMITE_FINAL_X, linhaHorizontal );
+		}
+	}
+
+	private void desenharPecas(){
+		// Desenha todas as peças, menos a peça que estiver selecionada para movimento.
+		for( int linha = 0; linha < DimensoesTabuleiro.LINHAS; linha++ ){
+			for( int coluna = 0; coluna < this.tabuleiro[ linha ].length; coluna++ ){
+				try {
+					if( tabuleiro[ linha ][ coluna ].isOcupada() ){
+						Peca peca = tabuleiro[ linha ][ coluna ].getPeca();
+						if( peca != pecaSelecionada ){
+							graphic.drawImage(	peca.getImagem(),
+												peca.getCoordenadaX(), 
+												peca.getCoordenadaY(),
+												DimensoesTabuleiro.LADO_CASA,
+												DimensoesTabuleiro.LADO_CASA,
+												this );
+						}
+					}
+				} catch( NullPointerException nullPointerException ){}
+			}
+		}
+		// Desenhar peça selecionada por último, para que fique por cima das demais.
+		if( pecaSelecionada != null ){
+			graphic.drawImage(	pecaSelecionada.getImagem(),
+								pecaSelecionada.getCoordenadaX(),
+								pecaSelecionada.getCoordenadaY(),
+								DimensoesTabuleiro.LADO_CASA,
+								DimensoesTabuleiro.LADO_CASA,
+								this );
+		}
+	}
+
+	private int getLinha( int coordenadaX, int coordenadaY ){
+		int valorYAbsoluto = coordenadaY - DimensoesTabuleiro.LIMITE_INICIAL_Y;
+
+		if( !DimensoesTabuleiro.mouseDentroDoTabuleiro( coordenadaX, coordenadaY ) ){
+			return DimensoesTabuleiro.FORA_DOS_LIMITES;
+		}
+
+		return ( valorYAbsoluto / DimensoesTabuleiro.LADO_CASA );
+	}
+
+	private int getColuna( int coordenadaX, int coordenadaY ){
+		int valorXAbsoluto = coordenadaX - DimensoesTabuleiro.LIMITE_INICIAL_X;
+
+		if( !DimensoesTabuleiro.mouseDentroDoTabuleiro( coordenadaX, coordenadaY ) ){
+			return DimensoesTabuleiro.FORA_DOS_LIMITES;
+		}
+
+		return valorXAbsoluto / DimensoesTabuleiro.LADO_CASA;
+	}
+
+	@Override
+	public void mousePressed( MouseEvent mouseEvent ){
+		int	coluna	= getColuna( mouseEvent.getX(), mouseEvent.getY() ),
+			linha	= getLinha( mouseEvent.getX(), mouseEvent.getY() );
+
+		ultimoXMouse = mouseEvent.getX();
+		ultimoYMouse = mouseEvent.getY();
+
+		try {
+			if(	( DimensoesTabuleiro.mouseDentroDoTabuleiro( mouseEvent.getX(), mouseEvent.getY() ) ) &&
+				( tabuleiro[ linha ][ coluna ].isOcupada() ) ){
+				pecaSelecionada = tabuleiro[ linha ][ coluna ].getPeca();
+			}
+		} catch( NullPointerException nullPointerException ){}
+
+	}
+
+	@Override
+	public void mouseDragged( MouseEvent mouseEvent ){
+		if( pecaSelecionada != null && DimensoesTabuleiro.mouseDentroDoTabuleiro( mouseEvent.getX(), mouseEvent.getY() ) ){
+			int		deslocamentoEmX = mouseEvent.getX() - ultimoXMouse,
+					deslocamentoEmY	= mouseEvent.getY() - ultimoYMouse;
+
+			pecaSelecionada.setCoordenadaX( pecaSelecionada.getCoordenadaX() + deslocamentoEmX );
+			pecaSelecionada.setCoordenadaY( pecaSelecionada.getCoordenadaY() + deslocamentoEmY );
+
+			ultimoXMouse = mouseEvent.getX();
+			ultimoYMouse = mouseEvent.getY();
+
+			super.repaint();
+		}
+	}
+
+	@Override
+	public void mouseReleased( MouseEvent mouseEvent ){
+		int	linha	= getLinha( mouseEvent.getX(), mouseEvent.getY() ),
+			coluna	= getColuna( mouseEvent.getX(), mouseEvent.getY() );
+
+		try {
+			if( pecaSelecionada != null && regras.movimentoPermitido( tabuleiro, tabuleiro[ linha ][ coluna ], pecaSelecionada ) ){
+				pecaSelecionada.setLinha( linha );
+				pecaSelecionada.setColuna( coluna );
+			} else {
+				pecaSelecionada.resetarPosicaoInicial();
+			}
+		}
+		catch( NullPointerException nullPointerException ){}
+		catch( ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException ){
+			pecaSelecionada.resetarPosicaoInicial();
+		}
+
+		pecaSelecionada = null;
+
+		super.repaint();
+	}
+
+	public void mouseMoved( MouseEvent mouseEvent ){}
+	public void mouseClicked( MouseEvent mouseEvent ){}
+	public void mouseEntered( MouseEvent mouseEvent ){}
+	public void mouseExited( MouseEvent mouseEvent ){}
+
+	@Override
+	public void tratarPacoteRecebido( Pacote pacote ){
+		switch( pacote.getTipoPacote().getDescricao() ){
+			case "MOUSE_PRESSIONADO":
+				this.mousePressed( (MouseEvent)pacote.getPayload() );
+				break;
+
+			case "MOUSE_ARRASTADO":
+				this.mouseDragged( (MouseEvent)pacote.getPayload() );
+				break;
+
+			case "MOUSE_LIBERADO":
+				this.mouseReleased( (MouseEvent)pacote.getPayload() );
+				break;
+
+			default:
+				break;
+		}
+	}
+}

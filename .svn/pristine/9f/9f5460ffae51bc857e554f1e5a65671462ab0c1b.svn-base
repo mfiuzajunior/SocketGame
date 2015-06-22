@@ -1,0 +1,17 @@
+package br.edu.ifce.mflj.jogo;
+
+import br.edu.ifce.mflj.dados.Casa;
+import br.edu.ifce.mflj.dados.Peca;
+
+public class RegulamentoKombate implements Regulamento {
+
+	@Override
+	public Boolean movimentoPermitido( Casa[][] tabuleiro, Casa casaDestino, Peca pecaEmMovimento ){
+		if( !casaDestino.isOcupada() ){
+			tabuleiro[ pecaEmMovimento.getLinha() ][ pecaEmMovimento.getColuna() ] = new Casa( pecaEmMovimento.getLinha(), pecaEmMovimento.getColuna(), null );
+			tabuleiro[ casaDestino.getLinha() ][ casaDestino.getColuna() ] = new Casa( casaDestino.getLinha(), casaDestino.getColuna(), pecaEmMovimento.getTipoPeca() );
+			return true;
+		}
+		return false;
+	}
+}
