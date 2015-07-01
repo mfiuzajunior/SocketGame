@@ -6,18 +6,9 @@ import javax.swing.ImageIcon;
 
 public class Peca {
 
-	public static final int		CASA_DE_PROVA	= 0,
-								CASA_VAZIA		= 1,
-								AZUL			= 8,
-								AMARELA			= 9,
-								VERDE			= 10,
-								ROSA			= 11,
-								ROXA			= 12,
-								LARANJA			= 13,
-								PRETA			= 14,
-								BRANCA			= 15,
-								REPOR_PECAS		= 16,
-								CAIXA			= 17;
+	public static final int	AMARELA	= 1,
+							PRETA	= 2;
+
 	private Image	imagem;
 
 	private Integer	tipoPeca,
@@ -45,52 +36,12 @@ public class Peca {
 		this.coordenadaY	= this.limiteInicialY + ( linha * this.extensao );
 
 		switch( this.tipoPeca ){
-			case Peca.CASA_DE_PROVA:
-				nomeImagem = "imagens/casa_de_prova.png";
-				break;
-
-			case Peca.CASA_VAZIA:
-				nomeImagem = "imagens/casa_vazia.png";
-				break;
-
 			case Peca.PRETA:
 				nomeImagem = "imagens/preta.png";
 				break;
 
-			case Peca.BRANCA:
-				nomeImagem = "imagens/branca.png";
-				break;
-
-			case Peca.AZUL:
-				nomeImagem = "imagens/azul.png";
-				break;
-
 			case Peca.AMARELA:
 				nomeImagem = "imagens/amarela.png";
-				break;
-
-			case Peca.VERDE:
-				nomeImagem = "imagens/verde.png";
-				break;
-
-			case Peca.ROSA:
-				nomeImagem = "imagens/rosa.png";
-				break;
-
-			case Peca.ROXA:
-				nomeImagem = "imagens/roxa.png";
-				break;
-
-			case Peca.LARANJA:
-				nomeImagem = "imagens/laranja.png";
-				break;
-
-			case Peca.REPOR_PECAS:
-				nomeImagem = "imagens/mais_pecas.png";
-				break;
-
-			case Peca.CAIXA:
-				nomeImagem = "imagens/caixa.png";
 				break;
 
 			default:
@@ -178,5 +129,31 @@ public class Peca {
 	public void resetarPosicaoInicial(){
 		this.coordenadaX = this.limiteInicialX + ( this.getColuna() * this.extensao );
 		this.coordenadaY = this.limiteInicialY + ( this.getLinha() * this.extensao );
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((tipoPeca == null) ? 0 : tipoPeca.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Peca other = (Peca) obj;
+		if (tipoPeca == null) {
+			if (other.tipoPeca != null)
+				return false;
+		} else if (!tipoPeca.equals(other.tipoPeca))
+			return false;
+		return true;
 	}
 }

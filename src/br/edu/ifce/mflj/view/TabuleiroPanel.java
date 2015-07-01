@@ -14,14 +14,11 @@ import javax.swing.JPanel;
 import br.edu.ifce.mflj.comunicacao.Pacote;
 import br.edu.ifce.mflj.comunicacao.TipoPacote;
 import br.edu.ifce.mflj.dados.Casa;
-import br.edu.ifce.mflj.dados.CasaComposta;
-import br.edu.ifce.mflj.dados.CasaSimples;
 import br.edu.ifce.mflj.dados.DimensoesTabuleiro;
 import br.edu.ifce.mflj.dados.Peca;
 import br.edu.ifce.mflj.jogo.Regulamento;
 import br.edu.ifce.mflj.jogo.excecoes.CasaCompostaException;
 import br.edu.ifce.mflj.jogo.excecoes.MovimentoException;
-import br.edu.ifce.mflj.jogo.excecoes.RepositorioDePecasException;
 import br.edu.ifce.mflj.observer.CanalListener;
 import br.edu.ifce.mflj.observer.MovimentoListener;
 
@@ -29,8 +26,12 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 
 	private static final long serialVersionUID = -8383511424909321696L;
 
-	private	Casa[][]				tabuleiroBackground,
-									tabuleiroDasPecas;
+	private static final int VOLTE_DUAS_CASAS	= -2;
+	private static final int AVANCE_DUAS_CASAS	= 2;
+	private static final int UM_TURNO_PARADO	= 0;
+	private static final int ROLE_O_DADO		= -1;
+
+	private	Casa[][]				tabuleiroDasPecas;
 	private Graphics2D				graphics;
 	private Integer					ultimoXMouse,
 									ultimoYMouse;
@@ -40,16 +41,10 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 	private Boolean					movimentoLocal = true;
 
 	public TabuleiroPanel(){
-		tabuleiroBackground		= new Casa[ DimensoesTabuleiro.LINHAS ][ DimensoesTabuleiro.COLUNAS ];
 		tabuleiroDasPecas		= new Casa[ DimensoesTabuleiro.LINHAS ][ DimensoesTabuleiro.COLUNAS ];
 		listenersDeMovimento	= new ArrayList<MovimentoListener>();
 
-		limparTabuleiro();
-
-		posicoesIniciaisDasPecas( tabuleiroBackground );
 		posicoesIniciaisDasPecas( tabuleiroDasPecas );
-
-		reporPecasDeJogo();
 
 		addMouseMotionListener( this );
 		addMouseListener( this );
@@ -82,124 +77,87 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 	}
 
 	/**
-	 * Cria casas vazias, sem peça, em todas as posições do tabuleiro
-	 */
-	private void limparTabuleiro(){
-		for( int linhaAtual = 0; linhaAtual < DimensoesTabuleiro.LINHAS; linhaAtual++ ){
-			for( int colunaAtual = 0; colunaAtual < tabuleiroBackground[ linhaAtual ].length; colunaAtual++ ){
-				tabuleiroBackground[ linhaAtual ][ colunaAtual ]	= new CasaSimples( linhaAtual, colunaAtual, null );
-				tabuleiroDasPecas[ linhaAtual ][ colunaAtual ]		= new CasaSimples( linhaAtual, colunaAtual, null );
-			}
-		}
-	}
-
-	/**
 	 * Coloca as peças no bullpen, área onde as peças ficam guardadas no início do jogo.
 	 */
 	private void posicoesIniciaisDasPecas( Casa[][] tabuleiro ) {
-		tabuleiro[ 0 ][ 0 ] = new CasaSimples( 0, 0, Peca.CASA_VAZIA );
-		tabuleiro[ 0 ][ 1 ] = new CasaSimples( 0, 1, Peca.CASA_VAZIA );
-		tabuleiro[ 0 ][ 2 ] = new CasaSimples( 0, 2, Peca.CASA_VAZIA );
-		tabuleiro[ 0 ][ 3 ] = new CasaSimples( 0, 3, Peca.CASA_VAZIA );
-		tabuleiro[ 0 ][ 4 ] = new CasaComposta( 0, 4, new Peca[ 2 ][ 2 ] );
+		tabuleiro[ 0 ][ 0 ] = new Casa( 0, 0, null );
+		tabuleiro[ 0 ][ 1 ] = new Casa( 0, 1, null );
+		tabuleiro[ 0 ][ 2 ] = new Casa( 0, 2, null );
+		tabuleiro[ 0 ][ 3 ] = new Casa( 0, 3, null );
+		tabuleiro[ 0 ][ 4 ] = new Casa( 0, 4, VOLTE_DUAS_CASAS );
+		tabuleiro[ 0 ][ 5 ] = new Casa( 0, 5, null );
+		tabuleiro[ 0 ][ 6 ] = new Casa( 0, 6, null );
 
-		tabuleiro[ 1 ][ 0 ] = new CasaSimples( 1, 0, Peca.CASA_VAZIA );
-		tabuleiro[ 1 ][ 1 ] = new CasaSimples( 1, 1, Peca.CASA_VAZIA );
-		tabuleiro[ 1 ][ 2 ] = new CasaSimples( 1, 2, Peca.CASA_VAZIA );
-		tabuleiro[ 1 ][ 3 ] = new CasaSimples( 1, 3, Peca.CASA_VAZIA );
-		tabuleiro[ 1 ][ 4 ] = new CasaComposta( 1, 4, new Peca[ 2 ][ 2 ] );
+		tabuleiro[ 1 ][ 0 ] = new Casa( 1, 0, null );
+		tabuleiro[ 1 ][ 1 ] = new Casa( 1, 1, null );
+		tabuleiro[ 1 ][ 2 ] = new Casa( 1, 2, null );
+		tabuleiro[ 1 ][ 3 ] = new Casa( 1, 3, ROLE_O_DADO );
+		tabuleiro[ 1 ][ 4 ] = new Casa( 1, 4, null );
+		tabuleiro[ 1 ][ 5 ] = new Casa( 1, 5, null );
+		tabuleiro[ 1 ][ 6 ] = new Casa( 1, 6, UM_TURNO_PARADO );
 
-		tabuleiro[ 2 ][ 0 ] = new CasaSimples( 2, 0, Peca.CASA_VAZIA );
-		tabuleiro[ 2 ][ 1 ] = new CasaSimples( 2, 1, Peca.CASA_VAZIA );
-		tabuleiro[ 2 ][ 2 ] = new CasaSimples( 2, 2, Peca.CASA_VAZIA );
-		tabuleiro[ 2 ][ 3 ] = new CasaSimples( 2, 3, Peca.CASA_VAZIA );
-		tabuleiro[ 2 ][ 4 ] = new CasaComposta( 2, 4, new Peca[ 2 ][ 2 ] );
+		tabuleiro[ 2 ][ 0 ] = new Casa( 2, 0, null );
+		tabuleiro[ 2 ][ 1 ] = new Casa( 2, 1, AVANCE_DUAS_CASAS );
+		tabuleiro[ 2 ][ 2 ] = new Casa( 2, 2, null );
+		tabuleiro[ 2 ][ 3 ] = new Casa( 2, 3, null );
+		tabuleiro[ 2 ][ 4 ] = new Casa( 2, 4, null );
+		tabuleiro[ 2 ][ 5 ] = new Casa( 2, 5, null );
+		tabuleiro[ 2 ][ 6 ] = new Casa( 2, 6, null );
 
-		tabuleiro[ 3 ][ 0 ] = new CasaSimples( 3, 0, Peca.CASA_VAZIA );
-		tabuleiro[ 3 ][ 1 ] = new CasaSimples( 3, 1, Peca.CASA_VAZIA );
-		tabuleiro[ 3 ][ 2 ] = new CasaSimples( 3, 2, Peca.CASA_VAZIA );
-		tabuleiro[ 3 ][ 3 ] = new CasaSimples( 3, 3, Peca.CASA_VAZIA );
-		tabuleiro[ 3 ][ 4 ] = new CasaComposta( 3, 4, new Peca[ 2 ][ 2 ] );
+		tabuleiro[ 3 ][ 0 ] = new Casa( 3, 0, null );
+		tabuleiro[ 3 ][ 1 ] = new Casa( 3, 1, ROLE_O_DADO );
+		tabuleiro[ 3 ][ 2 ] = new Casa( 3, 2, null );
+		tabuleiro[ 3 ][ 3 ] = new Casa( 3, 3, null );
+		tabuleiro[ 3 ][ 4 ] = new Casa( 3, 4, UM_TURNO_PARADO );
+		tabuleiro[ 3 ][ 5 ] = new Casa( 3, 5, null );
+		tabuleiro[ 3 ][ 6 ] = new Casa( 3, 6, null );
 
-		tabuleiro[ 4 ][ 0 ] = new CasaSimples( 4, 0, Peca.CASA_VAZIA );
-		tabuleiro[ 4 ][ 1 ] = new CasaSimples( 4, 1, Peca.CASA_VAZIA );
-		tabuleiro[ 4 ][ 2 ] = new CasaSimples( 4, 2, Peca.CASA_VAZIA );
-		tabuleiro[ 4 ][ 3 ] = new CasaSimples( 4, 3, Peca.CASA_VAZIA );
-		tabuleiro[ 4 ][ 4 ] = new CasaComposta( 4, 4, new Peca[ 2 ][ 2 ] );
+		tabuleiro[ 4 ][ 0 ] = new Casa( 4, 0, null );
+		tabuleiro[ 4 ][ 1 ] = new Casa( 4, 1, null );
+		tabuleiro[ 4 ][ 2 ] = new Casa( 4, 2, null );
+		tabuleiro[ 4 ][ 3 ] = new Casa( 4, 3, null );
+		tabuleiro[ 4 ][ 4 ] = new Casa( 4, 4, VOLTE_DUAS_CASAS );
+		tabuleiro[ 4 ][ 5 ] = new Casa( 4, 5, null );
+		tabuleiro[ 4 ][ 6 ] = new Casa( 4, 6, null );
 
-		tabuleiro[ 5 ][ 0 ] = new CasaSimples( 5, 0, Peca.CASA_VAZIA );
-		tabuleiro[ 5 ][ 1 ] = new CasaSimples( 5, 1, Peca.CASA_VAZIA );
-		tabuleiro[ 5 ][ 2 ] = new CasaSimples( 5, 2, Peca.CASA_VAZIA );
-		tabuleiro[ 5 ][ 3 ] = new CasaSimples( 5, 3, Peca.CASA_VAZIA );
-		tabuleiro[ 5 ][ 4 ] = new CasaComposta( 5, 4, new Peca[ 2 ][ 2 ] );
-
-		tabuleiro[ 6 ][ 0 ] = new CasaSimples( 6, 0, Peca.CASA_VAZIA );
-		tabuleiro[ 6 ][ 1 ] = new CasaSimples( 6, 1, Peca.CASA_VAZIA );
-		tabuleiro[ 6 ][ 2 ] = new CasaSimples( 6, 2, Peca.CASA_VAZIA );
-		tabuleiro[ 6 ][ 3 ] = new CasaSimples( 6, 3, Peca.CASA_VAZIA );
-		tabuleiro[ 6 ][ 4 ] = new CasaComposta( 6, 4, new Peca[ 2 ][ 2 ] );
-
-		tabuleiro[ 7 ][ 0 ] = new CasaSimples( 7, 0, Peca.CASA_VAZIA );
-		tabuleiro[ 7 ][ 1 ] = new CasaSimples( 7, 1, Peca.CASA_VAZIA );
-		tabuleiro[ 7 ][ 2 ] = new CasaSimples( 7, 2, Peca.CASA_VAZIA );
-		tabuleiro[ 7 ][ 3 ] = new CasaSimples( 7, 3, Peca.CASA_VAZIA );
-		tabuleiro[ 7 ][ 4 ] = new CasaComposta( 7, 4, new Peca[ 2 ][ 2 ] );
-
-		tabuleiro[ 8 ][ 0 ] = new CasaSimples( 8, 0, Peca.CASA_VAZIA );
-		tabuleiro[ 8 ][ 1 ] = new CasaSimples( 8, 1, Peca.CASA_VAZIA );
-		tabuleiro[ 8 ][ 2 ] = new CasaSimples( 8, 2, Peca.CASA_VAZIA );
-		tabuleiro[ 8 ][ 3 ] = new CasaSimples( 8, 3, Peca.CASA_VAZIA );
-		tabuleiro[ 8 ][ 4 ] = new CasaComposta( 8, 4, new Peca[ 2 ][ 2 ] );
-
-		tabuleiro[ 9 ][ 0 ] = new CasaSimples( 9, 0, Peca.CASA_VAZIA );
-		tabuleiro[ 9 ][ 1 ] = new CasaSimples( 9, 1, Peca.CASA_VAZIA );
-		tabuleiro[ 9 ][ 2 ] = new CasaSimples( 9, 2, Peca.CASA_VAZIA );
-		tabuleiro[ 9 ][ 3 ] = new CasaSimples( 9, 3, Peca.CASA_VAZIA );
-		tabuleiro[ 9 ][ 4 ] = new CasaComposta( 9, 4, new Peca[ 2 ][ 2 ] );
-
-		tabuleiro[ 11 ][ 0 ] = new CasaSimples( 11, 0, Peca.CASA_VAZIA );
-		tabuleiro[ 11 ][ 1 ] = new CasaSimples( 11, 1, Peca.CASA_VAZIA );
-		tabuleiro[ 11 ][ 2 ] = new CasaSimples( 11, 2, Peca.CASA_VAZIA );
-		tabuleiro[ 11 ][ 3 ] = new CasaSimples( 11, 3, Peca.CASA_VAZIA );
 	}
 	
-	private void reporPecasDeJogo() {
-		tabuleiroDasPecas[ 0 ][ 5 ]		= new CasaSimples( 0, 5,	Peca.PRETA );
-		tabuleiroDasPecas[ 1 ][ 5 ]		= new CasaSimples( 1, 5,	Peca.BRANCA );
-		tabuleiroDasPecas[ 2 ][ 5 ]		= new CasaSimples( 2, 5,	Peca.AZUL );
-		tabuleiroDasPecas[ 3 ][ 5 ]		= new CasaSimples( 3, 5,	Peca.AMARELA );
-		tabuleiroDasPecas[ 4 ][ 5 ]		= new CasaSimples( 4, 5,	Peca.VERDE );
-		tabuleiroDasPecas[ 5 ][ 5 ]		= new CasaSimples( 5, 5,	Peca.ROSA );
-		tabuleiroDasPecas[ 6 ][ 5 ]		= new CasaSimples( 6, 5,	Peca.ROXA );
-		tabuleiroDasPecas[ 7 ][ 5 ]		= new CasaSimples( 7, 5,	Peca.LARANJA );
-
-		tabuleiroDasPecas[ 9 ][ 5 ]		= new CasaSimples( 9, 5,	Peca.CAIXA );
-		tabuleiroDasPecas[ 11 ][ 5 ]	= new CasaSimples( 11, 5,	Peca.REPOR_PECAS );
-	}
-
 	@Override
 	public void paintComponent( Graphics graphics ){
 		super.paintComponent( graphics );
 		this.graphics = ( Graphics2D )graphics.create();
 
 		redesenharTabuleiro();
+		desenharGrade();
 		desenharPecas();
 
 		this.graphics.dispose();
 	}
 
-	private void redesenharTabuleiro() {
-		graphics.drawImage( new ImageIcon( "imagens/plano_de_fundo.jpg" ).getImage(), 0, 0, DimensoesTabuleiro.LIMITE_FINAL_X, DimensoesTabuleiro.LIMITE_FINAL_Y, null );
-
-		// Desenha apenas as casas vazias
+	private void desenharGrade() {
+		// Linhas verticais
 		for( int linha = 0; linha < DimensoesTabuleiro.LINHAS; linha++ ){
-			for( int coluna = 0; coluna < this.tabuleiroBackground[ linha ].length; coluna++ ){
-				try {
-					tabuleiroBackground[ linha ][ coluna ].desenharBackground( graphics, this );
-				}
-				catch( NullPointerException nullPointerException ){}
-			}
+			this.graphics.drawLine( 0, linha * DimensoesTabuleiro.LADO_CASA, DimensoesTabuleiro.LIMITE_FINAL_X, linha * DimensoesTabuleiro.LADO_CASA);
 		}
+
+		// Linhas horizontais
+		for( int linha = 0; linha < DimensoesTabuleiro.COLUNAS; linha++ ){
+			this.graphics.drawLine( linha * DimensoesTabuleiro.LADO_CASA, 0, linha * DimensoesTabuleiro.LADO_CASA, DimensoesTabuleiro.LIMITE_FINAL_Y );
+		}
+	}
+
+	private void redesenharTabuleiro() {
+		graphics.drawImage( new ImageIcon( "imagens/tabuleiro.png" ).getImage(), 0, 0, DimensoesTabuleiro.LIMITE_FINAL_X, DimensoesTabuleiro.LIMITE_FINAL_Y, null );
+
+//		// Desenha apenas as casas vazias
+//		for( int linha = 0; linha < DimensoesTabuleiro.LINHAS; linha++ ){
+//			for( int coluna = 0; coluna < this.tabuleiroBackground[ linha ].length; coluna++ ){
+//				try {
+//					tabuleiroBackground[ linha ][ coluna ].desenharBackground( graphics, this );
+//				}
+//				catch( NullPointerException nullPointerException ){}
+//			}
+//		}
 	}
 
 	private void desenharPecas(){
@@ -254,9 +212,6 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 		try {
 			if(	pecaSelecionavel( mouseEvent, coluna, linha ) ){
 				pecaSelecionada = tabuleiroDasPecas[ linha ][ coluna ].getPecaSelecionada( ultimoXMouse, ultimoYMouse );
-
-			} else if( tabuleiroDasPecas[ linha ][ coluna ].getPeca().getTipoPeca() == Peca.REPOR_PECAS ){
-				reporPecasDeJogo();
 			}
 
 		}
@@ -291,9 +246,7 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 			}
 		}
 		catch( MovimentoException movimentoException ){
-			if( movimentoException instanceof RepositorioDePecasException ){
-				tabuleiroDasPecas[ pecaSelecionada.getLinha() ][ pecaSelecionada.getColuna() ]	= new CasaSimples( linha, coluna, Peca.CASA_VAZIA );
-			}
+			
 		}
 
 		pecaSelecionada = null;
@@ -321,10 +274,6 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 
 	private Boolean pecaSelecionavel( MouseEvent mouseEvent, int coluna, int linha ) throws CasaCompostaException {
 		return	( DimensoesTabuleiro.mouseDentroDoTabuleiro( mouseEvent.getX(), mouseEvent.getY() ) )	&&
-				( tabuleiroDasPecas[ linha ][ coluna ].getPecaSelecionada( mouseEvent.getX(), mouseEvent.getY() ).getTipoPeca() != Peca.CASA_DE_PROVA )	&&
-				( tabuleiroDasPecas[ linha ][ coluna ].getPecaSelecionada( mouseEvent.getX(), mouseEvent.getY() ).getTipoPeca() != Peca.REPOR_PECAS )	&&
-				( tabuleiroDasPecas[ linha ][ coluna ].getPecaSelecionada( mouseEvent.getX(), mouseEvent.getY() ).getTipoPeca() != Peca.CASA_VAZIA )	&&
-				( tabuleiroDasPecas[ linha ][ coluna ].getPecaSelecionada( mouseEvent.getX(), mouseEvent.getY() ).getTipoPeca() != Peca.CAIXA )			&&
 				( tabuleiroDasPecas[ linha ][ coluna ].isOcupada() );
 	}
 

@@ -2,9 +2,9 @@ package br.edu.ifce.mflj.dados;
 
 public class DimensoesTabuleiro {
 	public static final int FORA_DOS_LIMITES	= -1,
-							COLUNAS				= 6,
-							LINHAS				= 12,
-							LADO_CASA			= 46,
+							COLUNAS				= 7,
+							LINHAS				= 5,
+							LADO_CASA			= 80,
 							LIMITE_INICIAL_X	= 0,
 							LIMITE_INICIAL_Y	= 0,
 							LIMITE_FINAL_X		= LADO_CASA * COLUNAS,

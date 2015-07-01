@@ -118,7 +118,7 @@ public class JanelaInicial implements MovimentoListener {
 		apelido = JOptionPane.showInputDialog( janelaPrincipal, "Como deseja ser chamado?" );
 
 		janelaPrincipal.setResizable( false );
-		janelaPrincipal.setBounds( 100, 100, 650, 700 );
+		janelaPrincipal.setBounds( 100, 100, 950, 550 );
 		janelaPrincipal.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		janelaPrincipal.getContentPane().setLayout( null );
 		janelaPrincipal.setVisible( true );

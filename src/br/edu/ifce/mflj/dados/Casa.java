@@ -2,27 +2,21 @@ package br.edu.ifce.mflj.dados;
 
 import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
+import java.util.List;
 
-public abstract class Casa {
+public class Casa {
 
-	private Boolean	ocupada;
-	private Integer	coluna,
-					linha;
-	private Peca	peca;
+	private Boolean		ocupada;
+	private Integer		coluna,
+						linha;
+	private List<Peca>	pecas;
+	private Integer		restricaoDeMovimento;
 
 	public Casa(){}
 
-	public Casa( Integer linha, Integer coluna, Integer tipoPeca ){
+	public Casa( Integer linha, Integer coluna, Integer restricaoDeMovimento ){
 		this.linha	= linha;
 		this.coluna	= coluna;
-
-		if( tipoPeca != null ){
-			this.ocupada	= true;
-			this.peca		= new Peca(	linha, coluna, tipoPeca );
-
-		} else {
-			this.ocupada = false;
-		}
 	}
 
 	public Boolean isOcupada(){
@@ -49,12 +43,27 @@ public abstract class Casa {
 		this.linha = linha;
 	}
 
-	public Peca getPeca(){
-		return peca;
+	public Boolean adicionarPeca( Peca peca ){
+		if( pecas.size() < 3 && !pecas.contains( peca ) ){
+			pecas.add( peca );
+			return true;
+		}
+		return false;
 	}
 
-	public void setPeca( Peca peca ){
-		this.peca = peca;
+	public Boolean removerPeca( Peca peca ){
+		if( pecas.contains( peca ) ){
+			return pecas.remove( peca );
+		}
+		return false;
+	}
+
+	public Integer getRestricaoDeMovimento() {
+		return restricaoDeMovimento;
+	}
+
+	public void setRestricaoDeMovimento(Integer restricaoDeMovimento) {
+		this.restricaoDeMovimento = restricaoDeMovimento;
 	}
 
 	protected int getCoordenadaX( Integer coluna ){
@@ -73,8 +82,9 @@ public abstract class Casa {
 		return this.getCoordenadaY( this.getLinha() );
 	}
 
-	public abstract void desenharPecas( Graphics2D graphics, ImageObserver imageObserver );
-	public abstract void desenharBackground( Graphics2D graphics, ImageObserver imageObserver );
-	public abstract void posicionarPeca( Casa[][] tabuleiro, Integer coordenadaYDestino, Integer coordenadaXDestino, Peca peca );
-	public abstract Peca getPecaSelecionada( Integer coordenadaX, Integer coordenadaY );
+	public void desenharPecas( Graphics2D graphics, ImageObserver imageObserver ){}
+	public void posicionarPeca( Casa[][] tabuleiro, Integer coordenadaYDestino, Integer coordenadaXDestino, Peca peca ){}
+	public Peca getPecaSelecionada( Integer coordenadaX, Integer coordenadaY ){
+		return null;
+	}
 }
