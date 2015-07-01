@@ -30,21 +30,10 @@
 	<bean id="beanListaDeUsuarios"				class="br.edu.ifce.mflj.view.ListaDeUsuarios"/>
 	<bean id="canalDeComunicacao"				class="br.edu.ifce.mflj.conectividade.sockets.ClienteSocket"/>
 
-	<bean id="regrasMastermind" class="br.edu.ifce.mflj.jogo.Regulamento">
-	    <property name="regras">
-	        <list>
-	            <ref bean="regraDaCasaVazia"/>
-	            <ref bean="regraPecasBrancaPretaEmCasaDeProva"/>
-	            <ref bean="regraPecaGuardavel"/>
-	        </list>
-	    </property>
+	<bean id="regras" class="br.edu.ifce.mflj.jogo.Regulamento">
 	</bean>
 
 	<bean id="beanPanelTabuleiro" class="br.edu.ifce.mflj.view.TabuleiroPanel">
-	    <property name="regulamento" ref="regrasMastermind"/>
+	    <property name="regulamento" ref="regras"/>
 	</bean>
-
-	<bean id="regraDaCasaVazia"						class="br.edu.ifce.mflj.jogo.RegraCasaVazia" />
-	<bean id="regraPecasBrancaPretaEmCasaDeProva"	class="br.edu.ifce.mflj.jogo.RegraPecasBrancaPretaEmCasaDeProva" />
-	<bean id="regraPecaGuardavel"					class="br.edu.ifce.mflj.jogo.RegraPecaGuardavel" />
 </beans>

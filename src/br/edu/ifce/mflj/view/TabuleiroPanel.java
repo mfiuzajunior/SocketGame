@@ -120,8 +120,9 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 		tabuleiro[ 4 ][ 5 ] = new Casa( 4, 5, null );
 		tabuleiro[ 4 ][ 6 ] = new Casa( 4, 6, null );
 
+		tabuleiro[ 0 ][ 0 ].adicionarPeca( new Peca( 0, 0, Peca.AMARELA ) );
 	}
-	
+
 	@Override
 	public void paintComponent( Graphics graphics ){
 		super.paintComponent( graphics );
@@ -148,16 +149,6 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 
 	private void redesenharTabuleiro() {
 		graphics.drawImage( new ImageIcon( "imagens/tabuleiro.png" ).getImage(), 0, 0, DimensoesTabuleiro.LIMITE_FINAL_X, DimensoesTabuleiro.LIMITE_FINAL_Y, null );
-
-//		// Desenha apenas as casas vazias
-//		for( int linha = 0; linha < DimensoesTabuleiro.LINHAS; linha++ ){
-//			for( int coluna = 0; coluna < this.tabuleiroBackground[ linha ].length; coluna++ ){
-//				try {
-//					tabuleiroBackground[ linha ][ coluna ].desenharBackground( graphics, this );
-//				}
-//				catch( NullPointerException nullPointerException ){}
-//			}
-//		}
 	}
 
 	private void desenharPecas(){
@@ -170,6 +161,7 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 				catch( NullPointerException nullPointerException ){}
 			}
 		}
+
 		// Desenhar peça selecionada por último, para que fique por cima das demais.
 		if( pecaSelecionada != null ){
 			graphics.drawImage(	pecaSelecionada.getImagem(),

@@ -31,7 +31,7 @@ public class Peca {
 		this.tipoPeca		= tipoPeca;
 		this.limiteInicialX	= DimensoesTabuleiro.LIMITE_INICIAL_X;
 		this.limiteInicialY	= DimensoesTabuleiro.LIMITE_INICIAL_Y;
-		this.extensao		= DimensoesTabuleiro.LADO_CASA;
+		this.extensao		= 45;
 		this.coordenadaX	= this.limiteInicialX + ( coluna * this.extensao );
 		this.coordenadaY	= this.limiteInicialY + ( linha * this.extensao );
 

@@ -2,6 +2,8 @@ package br.edu.ifce.mflj.dados;
 
 import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Casa {
@@ -17,6 +19,7 @@ public class Casa {
 	public Casa( Integer linha, Integer coluna, Integer restricaoDeMovimento ){
 		this.linha	= linha;
 		this.coluna	= coluna;
+		pecas		= new ArrayList<Peca>();
 	}
 
 	public Boolean isOcupada(){
@@ -82,7 +85,18 @@ public class Casa {
 		return this.getCoordenadaY( this.getLinha() );
 	}
 
-	public void desenharPecas( Graphics2D graphics, ImageObserver imageObserver ){}
+	public void desenharPecas( Graphics2D graphics, ImageObserver imageObserver ){
+		for( Iterator<Peca> iterator = pecas.iterator(); iterator.hasNext(); ){
+			Peca pecaAtual = iterator.next();
+			graphics.drawImage(	pecaAtual.getImagem(),
+								pecaAtual.getCoordenadaX(),
+								pecaAtual.getCoordenadaY(),
+								pecaAtual.getExtensao(),
+								pecaAtual.getExtensao(),
+								null );
+		}
+	}
+
 	public void posicionarPeca( Casa[][] tabuleiro, Integer coordenadaYDestino, Integer coordenadaXDestino, Peca peca ){}
 	public Peca getPecaSelecionada( Integer coordenadaX, Integer coordenadaY ){
 		return null;
