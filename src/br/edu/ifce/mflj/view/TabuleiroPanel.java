@@ -120,7 +120,8 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 		tabuleiro[ 4 ][ 5 ] = new Casa( 4, 5, null );
 		tabuleiro[ 4 ][ 6 ] = new Casa( 4, 6, null );
 
-		tabuleiro[ 0 ][ 0 ].adicionarPeca( new Peca( 0, 0, Peca.AMARELA ) );
+		tabuleiro[ 0 ][ 0 ].adicionarPeca( new Peca( tabuleiro[ 0 ][ 0 ], 0, 0, Peca.AMARELA ) );
+		tabuleiro[ 0 ][ 0 ].adicionarPeca( new Peca( tabuleiro[ 0 ][ 0 ], 0, 0, Peca.PRETA ) );
 	}
 
 	@Override
@@ -129,7 +130,7 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 		this.graphics = ( Graphics2D )graphics.create();
 
 		redesenharTabuleiro();
-		desenharGrade();
+//		desenharGrade();
 		desenharPecas();
 
 		this.graphics.dispose();
@@ -156,6 +157,8 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 		for( int linha = 0; linha < DimensoesTabuleiro.LINHAS; linha++ ){
 			for( int coluna = 0; coluna < this.tabuleiroDasPecas[ linha ].length; coluna++ ){
 				try {
+					// Esse método desenha todas as peças contidas dentro da casa. Caso uma dessas peças seja a peça selecionada,
+					// ela não deverá ser desenhada.
 					tabuleiroDasPecas[ linha ][ coluna ].desenharPecas( graphics, this );
 				}
 				catch( NullPointerException nullPointerException ){}
@@ -167,8 +170,8 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 			graphics.drawImage(	pecaSelecionada.getImagem(),
 								pecaSelecionada.getCoordenadaX(),
 								pecaSelecionada.getCoordenadaY(),
-								DimensoesTabuleiro.LADO_CASA,
-								DimensoesTabuleiro.LADO_CASA,
+								pecaSelecionada.getExtensao(),
+								pecaSelecionada.getExtensao(),
 								this );
 		}
 	}
@@ -202,15 +205,11 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 		ultimoYMouse = mouseEvent.getY();
 
 		try {
-			if(	pecaSelecionavel( mouseEvent, coluna, linha ) ){
-				pecaSelecionada = tabuleiroDasPecas[ linha ][ coluna ].getPecaSelecionada( ultimoXMouse, ultimoYMouse );
-			}
-
+			pecaSelecionada = tabuleiroDasPecas[ linha ][ coluna ].getPecaSelecionada( ultimoXMouse, ultimoYMouse );
 		}
 		catch( NullPointerException nullPointerException ){
 			System.err.println( "mousePressed" );
 		}
-		catch( CasaCompostaException casaCompostaException ){}
 
 		notifyMovimento( TipoPacote.MOUSE_PRESSIONADO, mouseEvent );
 	}
@@ -224,7 +223,9 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 			Casa casaDestino  = tabuleiroDasPecas[ linha ][ coluna ];
 
 			if( pecaSelecionada != null && regulamento.movimentoPermitido( tabuleiroDasPecas, casaDestino, pecaSelecionada ) ){
-				casaDestino.posicionarPeca( tabuleiroDasPecas, mouseEvent.getY(), mouseEvent.getX(), pecaSelecionada );
+				// remove a peça da casa anterior ao movimento
+				pecaSelecionada.getContainer().removerPeca( pecaSelecionada );
+				casaDestino.adicionarPeca( pecaSelecionada );
 
 			} else {
 				pecaSelecionada.resetarPosicaoInicial();
@@ -264,11 +265,7 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 		}
 	}
 
-	private Boolean pecaSelecionavel( MouseEvent mouseEvent, int coluna, int linha ) throws CasaCompostaException {
-		return	( DimensoesTabuleiro.mouseDentroDoTabuleiro( mouseEvent.getX(), mouseEvent.getY() ) )	&&
-				( tabuleiroDasPecas[ linha ][ coluna ].isOcupada() );
-	}
-
+	
 	public void mouseMoved( MouseEvent mouseEvent ){}
 	public void mouseClicked( MouseEvent mouseEvent ){}
 	public void mouseEntered( MouseEvent mouseEvent ){}

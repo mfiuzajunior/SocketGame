@@ -20,14 +20,18 @@ public class Peca {
 					coluna,
 					linha;
 
+	private Casa	container;
+
+	private boolean	selecionada;
 
 	/**
 	 * @param coordenadaX Determina a posição X da imagem da peça em relação ao JPanel. O campo linha da classe determina a posição X na matrix do tabuleiro.
 	 * @param coordenadaY Determina a posição Y da imagem da peça em relação ao JPanel. O campo coluna da classe determina a posição Y na matrix do tabuleiro.
 	 */
-	public Peca( Integer linha, Integer coluna, Integer tipoPeca ){
+	public Peca( Casa container, Integer linha, Integer coluna, Integer tipoPeca ){
 		String nomeImagem	= "";
 
+		this.container		= container;
 		this.tipoPeca		= tipoPeca;
 		this.limiteInicialX	= DimensoesTabuleiro.LIMITE_INICIAL_X;
 		this.limiteInicialY	= DimensoesTabuleiro.LIMITE_INICIAL_Y;
@@ -52,6 +56,22 @@ public class Peca {
 
 		this.setLinha( linha );
 		this.setColuna( coluna );
+	}
+
+	public boolean isSelecionada() {
+		return selecionada;
+	}
+
+	public void setSelecionada(boolean selecionada) {
+		this.selecionada = selecionada;
+	}
+
+	public Casa getContainer() {
+		return container;
+	}
+
+	public void setContainer(Casa container) {
+		this.container = container;
 	}
 
 	public Integer getExtensao() {

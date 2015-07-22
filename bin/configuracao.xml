@@ -30,7 +30,14 @@
 	<bean id="beanListaDeUsuarios"				class="br.edu.ifce.mflj.view.ListaDeUsuarios"/>
 	<bean id="canalDeComunicacao"				class="br.edu.ifce.mflj.conectividade.sockets.ClienteSocket"/>
 
+	<bean id="regraDoEspacoDiponivel"	class="br.edu.ifce.mflj.jogo.RegraEspacoDisponivel"/>
+
 	<bean id="regras" class="br.edu.ifce.mflj.jogo.Regulamento">
+		<property name="regras">
+			<list>
+				<ref bean="regraDoEspacoDiponivel"/>
+			</list>
+		</property>
 	</bean>
 
 	<bean id="beanPanelTabuleiro" class="br.edu.ifce.mflj.view.TabuleiroPanel">
