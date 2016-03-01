@@ -130,7 +130,7 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 		this.graphics = ( Graphics2D )graphics.create();
 
 		redesenharTabuleiro();
-//		desenharGrade();
+		desenharGrade();
 		desenharPecas();
 
 		this.graphics.dispose();
@@ -149,7 +149,7 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 	}
 
 	private void redesenharTabuleiro() {
-		graphics.drawImage( new ImageIcon( "imagens/tabuleiro.png" ).getImage(), 0, 0, DimensoesTabuleiro.LIMITE_FINAL_X, DimensoesTabuleiro.LIMITE_FINAL_Y, null );
+		graphics.drawImage( new ImageIcon( "imagens/tabuleiro.jpg" ).getImage(), 0, 0, DimensoesTabuleiro.LIMITE_FINAL_X, DimensoesTabuleiro.LIMITE_FINAL_Y, null );
 	}
 
 	private void desenharPecas(){

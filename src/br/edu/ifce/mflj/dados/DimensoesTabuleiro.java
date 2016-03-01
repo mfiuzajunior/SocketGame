@@ -3,8 +3,8 @@ package br.edu.ifce.mflj.dados;
 public class DimensoesTabuleiro {
 	public static final int FORA_DOS_LIMITES	= -1,
 							COLUNAS				= 7,
-							LINHAS				= 5,
-							LADO_CASA			= 80,
+							LINHAS				= 7,
+							LADO_CASA			= 50,
 							LIMITE_INICIAL_X	= 0,
 							LIMITE_INICIAL_Y	= 0,
 							LIMITE_FINAL_X		= LADO_CASA * COLUNAS,
