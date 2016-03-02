@@ -8,6 +8,6 @@ public class RegraEspacoDisponivel implements Regra {
 
 	@Override
 	public Boolean movimentoValido(Casa[][] tabuleiro, Casa casaDestino, Peca pecaEmMovimento) throws MovimentoException {
-		return casaDestino.getPecas().size() < 2;
+		return false;
 	}
 }

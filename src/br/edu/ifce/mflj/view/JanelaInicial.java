@@ -115,7 +115,7 @@ public class JanelaInicial implements MovimentoListener {
 	}
 
 	public void inicializarInterfaceGrafica(){
-		apelido = JOptionPane.showInputDialog( janelaPrincipal, "Como deseja ser chamado?" );
+//		apelido = JOptionPane.showInputDialog( janelaPrincipal, "Como deseja ser chamado?" );
 
 		janelaPrincipal.setResizable( false );
 		janelaPrincipal.setBounds( 100, 100, 950, 550 );
@@ -164,7 +164,7 @@ public class JanelaInicial implements MovimentoListener {
 		canalDeComunicacao.addCanalListener( listaDeUsuarios );
 		canalDeComunicacao.addCanalListener( panelTabuleiro );
 
-		canalDeComunicacao.enviarPacote( new Pacote( TipoPacote.CHECK_IN, UUID.randomUUID().toString(), null, apelido ) );
+//		canalDeComunicacao.enviarPacote( new Pacote( TipoPacote.CHECK_IN, UUID.randomUUID().toString(), null, apelido ) );
 
 	}
 

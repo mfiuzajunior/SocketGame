@@ -7,41 +7,29 @@ import javax.swing.ImageIcon;
 public class Peca {
 
 	public static final int	AMARELA	= 1,
-							PRETA	= 2;
+							AZUL	= 2;
 
 	private Image	imagem;
 
 	private Integer	tipoPeca,
 					extensao,
-					limiteInicialX,
-					limiteInicialY,
 					coordenadaX,
-					coordenadaY,
-					coluna,
-					linha;
+					coordenadaY;
 
 	private Casa	container;
 
 	private boolean	selecionada;
 
-	/**
-	 * @param coordenadaX Determina a posição X da imagem da peça em relação ao JPanel. O campo linha da classe determina a posição X na matrix do tabuleiro.
-	 * @param coordenadaY Determina a posição Y da imagem da peça em relação ao JPanel. O campo coluna da classe determina a posição Y na matrix do tabuleiro.
-	 */
-	public Peca( Casa container, Integer linha, Integer coluna, Integer tipoPeca ){
+	public Peca( Casa container, Integer tipoPeca ){
 		String nomeImagem	= "";
 
 		this.container		= container;
 		this.tipoPeca		= tipoPeca;
-		this.limiteInicialX	= DimensoesTabuleiro.LIMITE_INICIAL_X;
-		this.limiteInicialY	= DimensoesTabuleiro.LIMITE_INICIAL_Y;
-		this.extensao		= 45;
-		this.coordenadaX	= this.limiteInicialX + ( coluna * this.extensao );
-		this.coordenadaY	= this.limiteInicialY + ( linha * this.extensao );
+		extensao			= 20;
 
 		switch( this.tipoPeca ){
-			case Peca.PRETA:
-				nomeImagem = "imagens/preta.png";
+			case Peca.AZUL:
+				nomeImagem = "imagens/azul.png";
 				break;
 
 			case Peca.AMARELA:
@@ -52,10 +40,7 @@ public class Peca {
 				break;
 		}
 
-		this.imagem = new ImageIcon( nomeImagem ).getImage();
-
-		this.setLinha( linha );
-		this.setColuna( coluna );
+		imagem = new ImageIcon( nomeImagem ).getImage();
 	}
 
 	public boolean isSelecionada() {
@@ -75,31 +60,15 @@ public class Peca {
 	}
 
 	public Integer getExtensao() {
-		return this.extensao;
+		return extensao;
 	}
 
 	public void setExtensao(Integer extensao) {
 		this.extensao = extensao;
 	}
 
-	public Integer getLimiteInicialX() {
-		return this.limiteInicialX;
-	}
-	
-	public void setLimiteInicialX(Integer limiteInicialX) {
-		this.limiteInicialX = limiteInicialX;
-	}
-	
-	public Integer getLimiteInicialY() {
-		return this.limiteInicialY;
-	}
-	
-	public void setLimiteInicialY(Integer limiteInicialY) {
-		this.limiteInicialY = limiteInicialY;
-	}
-
 	public Image getImagem() {
-		return this.imagem;
+		return imagem;
 	}
 
 	public void setImagem(Image imagem) {
@@ -107,7 +76,7 @@ public class Peca {
 	}
 
 	public Integer getTipoPeca() {
-		return this.tipoPeca;
+		return tipoPeca;
 	}
 
 	public void setTipoPeca(Integer tipoPeca) {
@@ -115,7 +84,7 @@ public class Peca {
 	}
 
 	public Integer getCoordenadaX() {
-		return this.coordenadaX;
+		return coordenadaX;
 	}
 
 	public void setCoordenadaX(Integer coordenadaX) {
@@ -123,32 +92,16 @@ public class Peca {
 	}
 
 	public Integer getCoordenadaY() {
-		return this.coordenadaY;
+		return coordenadaY;
 	}
 
 	public void setCoordenadaY(Integer coordenadaY) {
 		this.coordenadaY = coordenadaY;
 	}
 
-	public Integer getColuna() {
-		return this.coluna;
-	}
-
-	public void setColuna(Integer coluna) {
-		this.coluna = coluna;
-	}
-
-	public Integer getLinha() {
-		return this.linha;
-	}
-
-	public void setLinha(Integer linha) {
-		this.linha = linha;
-	}
-
 	public void resetarPosicaoInicial(){
-		this.coordenadaX = this.limiteInicialX + ( this.getColuna() * this.extensao );
-		this.coordenadaY = this.limiteInicialY + ( this.getLinha() * this.extensao );
+		coordenadaX = getContainer().getCoordenadaX();
+		coordenadaY = getContainer().getCoordenadaY();
 	}
 
 	@Override
