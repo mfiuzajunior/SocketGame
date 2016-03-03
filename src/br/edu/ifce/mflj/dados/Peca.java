@@ -129,4 +129,17 @@ public class Peca {
 			return false;
 		return true;
 	}
+
+	public String toString(){
+		switch( this.tipoPeca ){
+			case Peca.AZUL:
+				return "azul";
+
+			case Peca.AMARELA:
+				return "amarela";
+
+			default:
+				return "";
+		}
+	}
 }

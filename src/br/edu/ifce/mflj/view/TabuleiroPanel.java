@@ -20,7 +20,6 @@ import br.edu.ifce.mflj.dados.Casa;
 import br.edu.ifce.mflj.dados.DimensoesTabuleiro;
 import br.edu.ifce.mflj.dados.Peca;
 import br.edu.ifce.mflj.jogo.Regulamento;
-import br.edu.ifce.mflj.jogo.excecoes.MovimentoException;
 import br.edu.ifce.mflj.observer.CanalListener;
 import br.edu.ifce.mflj.observer.MovimentoListener;
 
@@ -95,8 +94,8 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 		this.regulamento = regulamento;
 	}
 
-	private void criarCasa( int coordenadaX, int coordenadaY, Integer tipoPeca ){
-		Casa casa = new Casa( coordenadaX, coordenadaY );
+	private void criarCasa( int idCasa, int coordenadaX, int coordenadaY, Integer tipoPeca ){
+		Casa casa = new Casa( idCasa, coordenadaX, coordenadaY );
 
 		if( tipoPeca != 0 ){
 			casa.adicionarPeca( new Peca( casa, tipoPeca ) );
@@ -106,38 +105,39 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 	}
 
 	private void criarCasas(){
+		int id = 0;
 		tabuleiroDasPecas = new ArrayList<Casa>();
 
-		criarCasa( 0, 0, Peca.AMARELA );
-		criarCasa( 166,	0, Peca.AZUL );
-		criarCasa( 331,	0, 0 );
+		criarCasa( id++, 0, 0, Peca.AMARELA );
+		criarCasa( id++, 165, 0, Peca.AZUL );
+		criarCasa( id++, 330, 0, 0 );
 
-		criarCasa( 57, 57, 0 );
-		criarCasa( 166,	57, 0 );
-		criarCasa( 275, 57, 0 );
+		criarCasa( id++, 55, 55, 0 );
+		criarCasa( id++, 164, 55, 0 );
+		criarCasa( id++, 275, 55, 0 );
 
-		criarCasa( 112, 112, 0 );
-		criarCasa( 166, 112, 0 );
-		criarCasa( 221, 112, 0 );
+		criarCasa( id++, 110, 108, 0 );
+		criarCasa( id++, 164, 108, 0 );
+		criarCasa( id++, 219, 108, 0 );
 
-		criarCasa( 0, 165, 0 );
-		criarCasa( 57, 165, 0 );
-		criarCasa( 112, 165, 0 );
-		criarCasa( 221, 165, 0 );
-		criarCasa( 275, 165, 0 );
-		criarCasa( 331, 165, 0 );
+		criarCasa( id++, 0, 164, 0 );
+		criarCasa( id++, 55, 164, 0 );
+		criarCasa( id++, 110, 164, 0 );
+		criarCasa( id++, 219, 164, 0 );
+		criarCasa( id++, 275, 164, 0 );
+		criarCasa( id++, 330, 164, 0 );
 
-		criarCasa( 112, 221, 0 );
-		criarCasa( 166, 221, 0 );
-		criarCasa( 221, 221, 0 );
+		criarCasa( id++, 110, 221, 0 );
+		criarCasa( id++, 164, 221, 0 );
+		criarCasa( id++, 219, 221, 0 );
 
-		criarCasa( 57, 275,	0 );
-		criarCasa( 166, 275, 0 );
-		criarCasa( 275, 275, 0 );
+		criarCasa( id++, 55, 275,	0 );
+		criarCasa( id++, 164, 275, 0 );
+		criarCasa( id++, 275, 275, 0 );
 
-		criarCasa( 0, 331, 0 );
-		criarCasa( 166, 331, 0 );
-		criarCasa( 331, 331, 0 );
+		criarCasa( id++, 0, 331, 0 );
+		criarCasa( id++, 164, 331, 0 );
+		criarCasa( id++, 330, 331, 0 );
 	}
 
 	@Override
@@ -205,7 +205,7 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 		ultimoXMouse = mouseEvent.getX();
 		ultimoYMouse = mouseEvent.getY();
 
-//		notifyMovimento( TipoPacote.MOUSE_PRESSIONADO, mouseEvent );
+		notifyMovimento( TipoPacote.MOUSE_PRESSIONADO, mouseEvent );
 	}
 
 	@Override
@@ -224,10 +224,17 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 			}
 		}
 
+		redefinirPosicaoPecaSelecionada();
 		pecaSelecionada = null;
 
-//		notifyMovimento( TipoPacote.MOUSE_LIBERADO, mouseEvent );
+		notifyMovimento( TipoPacote.MOUSE_LIBERADO, mouseEvent );
 		super.repaint();
+	}
+
+	private void redefinirPosicaoPecaSelecionada() {
+		pecaSelecionada.setCoordenadaX( pecaSelecionada.getContainer().getCoordenadaX() );
+		pecaSelecionada.setCoordenadaY( pecaSelecionada.getContainer().getCoordenadaY() );
+		pecaSelecionada.setSelecionada( false );
 	}
 
 	@Override
@@ -242,7 +249,7 @@ public class TabuleiroPanel extends JPanel implements MouseMotionListener, Mouse
 			ultimoXMouse = mouseEvent.getX();
 			ultimoYMouse = mouseEvent.getY();
 
-//			notifyMovimento( TipoPacote.MOUSE_ARRASTADO, mouseEvent );
+			notifyMovimento( TipoPacote.MOUSE_ARRASTADO, mouseEvent );
 			super.repaint();
 		}
 	}
